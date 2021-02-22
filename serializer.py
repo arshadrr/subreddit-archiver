@@ -1,5 +1,3 @@
-import collections
-
 import praw
 
 
@@ -65,6 +63,15 @@ COMMENT_FIELDS = {
         }
 
 class FromFieldList:
+    """Extract fields listed in the fields dictionary from a source object,
+    assigning the values to self. Implements the sequence protocol so that it
+    can be passed to sqlite3.executemany
+
+    Args:
+        fields: a dictionary with two lists: one under the key "fields" that
+        lists all fields that will exist and another under the key
+        "post-process" that will be assigned manually later.
+    """
     def __init__(self, fields, source):
         # extract the allowed fields from the source object and assign them to
         # self. fields in "post-process" need to be processed manually.
@@ -85,7 +92,15 @@ class FromFieldList:
         return len(self.fields)
 
 class Submission(FromFieldList):
+    """Extracts fields from a praw.models.Submission object that are listed in
+    SUBMISSION_FIELDS. These are the fields that will be saved in the
+    posts table in the output sqlite database.
+
+    Args:
+        submission: a praw.models.Submission object
+    """
     def __init__(self, submission):
+        # extract fields that don't need to manually be extracted
         super().__init__(SUBMISSION_FIELDS, submission)
 
         # manually assign to self the fields that FromFieldList's __init__ should not
@@ -103,7 +118,15 @@ class Submission(FromFieldList):
             self.edited = submission.edited
 
 class Comment(FromFieldList):
+    """Extracts fields from a praw.models.Comment object that are listed in
+    COMMENT_FIELDS. These are the fields that will be saved in the comments
+    table in the output sqlite database.
+
+    Args:
+        comment: a praw.models.Comment object
+    """
     def __init__(self, comment):
+        # extract fields that don't need to manually be extracted
         super().__init__(COMMENT_FIELDS, comment)
 
         # manually assign to self the fields that FromFieldList's __init__ should not
