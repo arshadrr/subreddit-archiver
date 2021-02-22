@@ -24,3 +24,6 @@ if __name__ == "__main__":
         get_posts.get_posts()
 
         states.set_progress(states.Progress.COMPLETED)
+
+    if states.get_progress() == states.Progress.COMPLETED:
+        print("completed archiving")
