@@ -15,7 +15,7 @@ class Progress(enum.Enum):
 
     IDLE = 1
     SAVING_POSTS = 2
-
+    COMPLETED = 3
 
 def set_key(key, value):
     """Record a value under a key

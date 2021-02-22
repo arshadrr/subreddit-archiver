@@ -23,6 +23,4 @@ if __name__ == "__main__":
     if states.get_progress() == states.Progress.SAVING_POSTS:
         get_posts.get_posts()
 
-        states.set_subreddit(None)
-        states.set_progress(states.Progress.IDLE)
-        states.set_last_post(None)
+        states.set_progress(states.Progress.COMPLETED)
