@@ -5,7 +5,6 @@ import config
 import serializer
 import db
 
-import timer_util
 
 def get_post_batch(reddit, subreddit, last_post):
     posts = reddit.subreddit(subreddit).new(
@@ -15,7 +14,7 @@ def get_post_batch(reddit, subreddit, last_post):
 
     return list(posts)
 
-def get_posts(reddit):
+def get_posts(reddit, out_file):
     #TODO: work without credentials
     try:
         last_post = states.get_last_post()
@@ -24,7 +23,7 @@ def get_posts(reddit):
     # TODO validate the values subreddit can take. ensure db.get_connection will
     # create reasomably names files (perhaps the name might include slashes)
     subreddit = states.get_subreddit()
-    db_connection = db.get_connection(subreddit)
+    db_connection = db.get_connection(out_file)
 
     posts = get_post_batch(reddit, subreddit, last_post)
 
