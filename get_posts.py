@@ -15,10 +15,8 @@ def get_post_batch(reddit, subreddit, last_post):
 
     return list(posts)
 
-def get_posts():
+def get_posts(reddit):
     #TODO: work without credentials
-    reddit = praw.Reddit()
-
     try:
         last_post = states.get_last_post()
     except KeyError:

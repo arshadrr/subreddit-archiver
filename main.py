@@ -2,6 +2,8 @@ import logging
 import warnings
 import sys
 
+import praw
+
 import cli
 import config
 import states
@@ -15,7 +17,8 @@ def archive(subreddit, out_file):
         states.set_progress(states.Progress.SAVING_POSTS)
 
     if states.get_progress() == states.Progress.SAVING_POSTS:
-        get_posts.get_posts()
+        reddit = praw.Reddit()
+        get_posts.get_posts(reddit)
 
         states.set_progress(states.Progress.COMPLETED)
 
