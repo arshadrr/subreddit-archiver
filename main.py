@@ -18,7 +18,7 @@ def archive(subreddit, out_file):
 
     if states.get_progress() == states.Progress.SAVING_POSTS:
         reddit = praw.Reddit()
-        get_posts.get_posts(reddit)
+        get_posts.get_posts(reddit, out_file)
 
         states.set_progress(states.Progress.COMPLETED)
 
@@ -31,6 +31,6 @@ if __name__ == "__main__":
     args = cli.get_arg_parser().parse_args()
 
     if args.command == "archive":
-        archive(args)
+        archive(args.subreddit, args.file)
     else:
         print("update command not implemented")
