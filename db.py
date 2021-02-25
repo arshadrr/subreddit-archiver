@@ -3,13 +3,12 @@ import os
 
 import config
 
+
 def get_schema():
     with open(config.SCHEMA_FILE) as f:
         return f.read()
 
 def get_connection(name):
-    name += ".sqlite"
-
     if not os.path.exists(name):
         with sqlite3.connect(name) as conn:
             cur = conn.cursor()

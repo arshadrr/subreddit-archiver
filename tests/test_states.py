@@ -6,7 +6,7 @@ import config
 import states
 
 
-def test_hi(tmpdir, monkeypatch):
+def test_states(tmpdir, monkeypatch):
     monkeypatch.setattr(
             config,
             'STATES_FILE',
