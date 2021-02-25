@@ -5,6 +5,8 @@ import config
 import serializer
 import db
 
+import timer_util
+
 def get_post_batch(reddit, subreddit, last_post):
     posts = reddit.subreddit(subreddit).new(
             limit=config.BATCH_SIZE,
@@ -38,6 +40,7 @@ def get_posts():
                 except praw.exceptions.APIException:
                     time.sleep(1)
 
+
         # serialize the posts as serializer.Submission objects
         posts_serialized = map(serializer.Submission, posts)
         # flatten the comment forest
@@ -50,6 +53,8 @@ def get_posts():
         # insert posts and comments into the database
         db.insert_posts(db_connection, posts_serialized)
         db.insert_comments(db_connection, comments_serialized)
+
+        print(f"Saved {len(posts)} posts, {len(comments)} comments")
 
         last_post = posts[-1].name
         states.set_last_post(last_post)

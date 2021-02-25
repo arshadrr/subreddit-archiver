@@ -6,9 +6,9 @@ import config
 class DB(enum.Enum):
     """Keys that the dbm that keeps track of states can take"""
 
-    PROGRESS = "progress"
+    PROGRESS = "archival_progress"
     SUBREDDIT = "subreddit"
-    LAST_POST = "last_post"
+    LAST_POST = "last_saved_post"
 
 class Progress(enum.Enum):
     """Values the DB.PROGRESS key can take in the db"""

@@ -2,21 +2,15 @@ import logging
 import warnings
 import sys
 
+import cli
 import config
 import states
 import get_posts
 
-if __name__ == "__main__":
-    logging.basicConfig(filename=config.LOG_FILE, filemode="a", level=logging.INFO)
 
+def archive(subreddit, out_file):
+    # TODO: validate if a subreddit exists
     if states.get_progress() == states.Progress.IDLE:
-        try:
-            #TODO check if a subreddit exists
-            subreddit = sys.argv[1]
-        except IndexError:
-            warnings.warn("Provide name of subreddit to archive")
-            exit()
-
         states.set_subreddit(subreddit)
         states.set_progress(states.Progress.SAVING_POSTS)
 
@@ -27,3 +21,13 @@ if __name__ == "__main__":
 
     if states.get_progress() == states.Progress.COMPLETED:
         print("completed archiving")
+
+if __name__ == "__main__":
+    logging.basicConfig(filename=config.LOG_FILE, filemode="a", level=logging.INFO)
+
+    args = cli.get_arg_parser().parse_args()
+
+    if args.command == "archive":
+        archive(args)
+    else:
+        print("update command not implemented")
