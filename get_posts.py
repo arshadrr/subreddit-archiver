@@ -14,14 +14,13 @@ def get_post_batch(reddit, subreddit, last_post):
 
     return list(posts)
 
-def get_posts(reddit, out_file):
+def get_posts(reddit, db_connection):
     #TODO: work without credentials
     try:
         last_post = states.get_last_post()
     except KeyError:
         last_post = None
     subreddit = states.get_subreddit()
-    db_connection = db.get_connection(out_file)
 
     posts = get_post_batch(reddit, subreddit, last_post)
 
