@@ -38,16 +38,14 @@ def mock_reddit(praw_post_obj):
 
     return MockReddit()
 
-def test_get_post(mock_reddit, mock_states, test_post_output, tmpdir):
-    file_name = tmpdir + "/test_db.sqlite"
+def test_get_post(mock_reddit, mock_states, test_post_output, db_connection):
     reddit = mock_reddit
 
-    get_posts.get_posts(reddit, file_name)
+    get_posts.get_posts(reddit, db_connection)
 
-    with sqlite3.connect(file_name) as db:
-        cursor = db.cursor()
-        posts = cursor.execute('SELECT * FROM posts ORDER BY id;').fetchall()
-        comments = cursor.execute('SELECT * FROM comments ORDER BY id;').fetchall()
+    cursor = db_connection.cursor()
+    posts = cursor.execute('SELECT * FROM posts ORDER BY id;').fetchall()
+    comments = cursor.execute('SELECT * FROM comments ORDER BY id;').fetchall()
 
     assert comments == test_post_output.COMMENTS
     assert posts == test_post_output.POSTS

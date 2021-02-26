@@ -5,6 +5,7 @@ import sys
 import praw
 
 import cli
+import db
 import config
 import states
 import get_posts
@@ -18,7 +19,8 @@ def archive(subreddit, out_file):
 
     if states.get_progress() == states.Progress.SAVING_POSTS:
         reddit = praw.Reddit()
-        get_posts.get_posts(reddit, out_file)
+        db_connection = db.get_connection(out_file)
+        get_posts.get_posts(reddit, db_connection)
 
         states.set_progress(states.Progress.COMPLETED)
 
