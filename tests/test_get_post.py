@@ -13,13 +13,6 @@ def test_post_output():
     return output
 
 @pytest.fixture
-def mock_states(monkeypatch):
-    # mock the states.py moduel so that the states.get_key returns a None (as a
-    # dummy object) and states.set_key does nothing
-    monkeypatch.setattr(states, 'get_key', lambda x: None)
-    monkeypatch.setattr(states, 'set_key', lambda x,y: None)
-
-@pytest.fixture
 def mock_reddit(praw_post_obj):
     # mock the praw.Reddit object
     class MockReddit:
@@ -38,7 +31,12 @@ def mock_reddit(praw_post_obj):
 
     return MockReddit()
 
-def test_get_post(mock_reddit, mock_states, test_post_output, db_connection):
+@pytest.fixture
+def setup_states(db_connection):
+    state = states.State(db_connection)
+    state.set_subreddit('learnart')
+
+def test_get_post(mock_reddit, setup_states, test_post_output, db_connection):
     reddit = mock_reddit
 
     get_posts.get_posts(reddit, db_connection)

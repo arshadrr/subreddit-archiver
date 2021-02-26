@@ -13,18 +13,20 @@ import get_posts
 
 def archive(subreddit, out_file):
     # TODO: validate if a subreddit exists
-    if states.get_progress() == states.Progress.IDLE:
-        states.set_subreddit(subreddit)
-        states.set_progress(states.Progress.SAVING_POSTS)
+    db_connection = db.get_connection(out_file)
+    state = states.State(db_connection)
 
-    if states.get_progress() == states.Progress.SAVING_POSTS:
+    if state.get_progress() == state.Progress.IDLE:
+        state.set_subreddit(subreddit)
+        state.set_progress(state.Progress.SAVING_POSTS)
+
+    if state.get_progress() == state.Progress.SAVING_POSTS:
         reddit = praw.Reddit()
-        db_connection = db.get_connection(out_file)
         get_posts.get_posts(reddit, db_connection)
 
-        states.set_progress(states.Progress.COMPLETED)
+        state.set_progress(state.Progress.COMPLETED)
 
-    if states.get_progress() == states.Progress.COMPLETED:
+    if state.get_progress() == state.Progress.COMPLETED:
         print("completed archiving")
 
 if __name__ == "__main__":

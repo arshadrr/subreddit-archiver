@@ -31,3 +31,21 @@ def insert_comments(db_connection, comments):
             comments
             )
     db_connection.commit()
+
+def set_kv(db_connection, key, value):
+    cursor = db_connection.cursor()
+    cursor.execute('INSERT INTO archive_metadata VALUES (?, ?)', (key, value))
+    db_connection.commit()
+
+def get_kv(db_connection, key):
+    cursor = db_connection.cursor()
+    value = cursor.execute(
+            'SELECT value FROM archive_metadata WHERE key = ?',
+            (key,)
+            ).fetchall()
+    db_connection.commit()
+
+    if value:
+        return value[0][0]
+    else:
+        raise KeyError
