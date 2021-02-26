@@ -1,7 +1,7 @@
-import dbm
 import enum
 
 import config
+import db
 
 class DB(enum.Enum):
     """Keys that the dbm that keeps track of states can take"""
@@ -17,53 +17,53 @@ class Progress(enum.Enum):
     SAVING_POSTS = 2
     COMPLETED = 3
 
-def set_key(key, value):
-    """Record a value under a key
 
-    Args:
-        key: The key to record the value under. An attribute of DB.
-        value: The value to store.
-    """
+class State:
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
 
-    with dbm.open(config.STATES_FILE, "c") as db:
-        if value == None:
-            del db[key.value]
-        else:
-            db[key.value] = str(value)
+    def set_key(self, key, value):
+        """Record a value under a key
 
-def get_key(key):
-    """Get a key from the dbm
+        Args:
+            key: The key to record the value under. An attribute of DB.
+            value: The value to store.
+        """
 
-    Args:
-        key: The key under which the required value is stored. An attribute of DB.
+        db.set_kv(self.db_connection, key.value, value)
 
-    Returns:
-        The string stored under the key.
-    """
+    def get_key(self, key):
+        """Get a key from the database
 
-    with dbm.open(config.STATES_FILE, "c") as db:
-        return db[key.value].decode()
+        Args:
+            key: The key under which the required value is stored. An attribute of DB.
 
-def get_progress():
-    try:
-        progress = Progress(int(get_key(DB.PROGRESS)))
-    except KeyError:
-        progress = Progress.IDLE
-        set_key(DB.PROGRESS, Progress.IDLE.value)
+        Returns:
+            The string stored under the key.
+        """
 
-    return progress
+        return db.get_kv(self.db_connection, key.value)
 
-def set_progress(progress):
-    set_key(DB.PROGRESS, progress.value)
+    def get_progress(self):
+        try:
+            progress = Progress(self.get_key(DB.PROGRESS))
+        except KeyError:
+            progress = Progress.IDLE
+            self.set_key(DB.PROGRESS, Progress.IDLE.value)
 
-def get_subreddit():
-    return get_key(DB.SUBREDDIT)
+        return progress
 
-def set_subreddit(subreddit):
-    set_key(DB.SUBREDDIT, subreddit)
+    def set_progress(self, progress):
+        self.set_key(DB.PROGRESS, progress.value)
 
-def get_last_post():
-    return get_key(DB.LAST_POST)
+    def get_subreddit(self):
+        return self.get_key(DB.SUBREDDIT)
 
-def set_last_post(last_post_id):
-    set_key(DB.LAST_POST, last_post_id)
+    def set_subreddit(self, subreddit):
+        self.set_key(DB.SUBREDDIT, subreddit)
+
+    def get_last_post(self):
+        return self.get_key(DB.LAST_POST)
+
+    def set_last_post(self, last_post_id):
+        self.set_key(DB.LAST_POST, last_post_id)

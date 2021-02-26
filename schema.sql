@@ -1,3 +1,8 @@
+CREATE TABLE archive_metadata (
+    key TEXT PRIMARY KEY NOT NULL,
+    value TEXT
+);
+
 CREATE TABLE posts (
     id TEXT PRIMARY KEY NOT NULL,
 

@@ -6,13 +6,8 @@ import config
 import states
 
 
-def test_states(tmpdir, monkeypatch):
-    monkeypatch.setattr(
-            config,
-            'STATES_FILE',
-            os.path.join(tmpdir, config.STATES_FILE)
-            )
+def test_states(db_connection):
+    state = states.State(db_connection)
 
-
-    states.set_key(states.DB.SUBREDDIT, 'hello')
-    assert states.get_key(states.DB.SUBREDDIT) == 'hello'
+    state.set_key(states.DB.SUBREDDIT, 'hello')
+    assert state.get_key(states.DB.SUBREDDIT) == 'hello'

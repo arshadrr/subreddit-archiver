@@ -16,11 +16,12 @@ def get_post_batch(reddit, subreddit, last_post):
 
 def get_posts(reddit, db_connection):
     #TODO: work without credentials
+    state = states.State(db_connection)
     try:
-        last_post = states.get_last_post()
+        last_post = state.get_last_post()
     except KeyError:
         last_post = None
-    subreddit = states.get_subreddit()
+    subreddit = state.get_subreddit()
 
     posts = get_post_batch(reddit, subreddit, last_post)
 
@@ -51,6 +52,6 @@ def get_posts(reddit, db_connection):
         print(f"Saved {len(posts)} posts, {len(comments)} comments")
 
         last_post = posts[-1].name
-        states.set_last_post(last_post)
+        state.set_last_post(last_post)
 
         posts = get_post_batch(reddit, subreddit, last_post)
