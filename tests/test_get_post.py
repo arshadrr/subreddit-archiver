@@ -46,11 +46,8 @@ def test_get_post(mock_reddit, mock_states, test_post_output, tmpdir):
 
     with sqlite3.connect(file_name) as db:
         cursor = db.cursor()
-        posts = cursor.execute('SELECT * FROM posts;').fetchall()
-        comments = cursor.execute('SELECT * FROM comments;').fetchall()
+        posts = cursor.execute('SELECT * FROM posts ORDER BY id;').fetchall()
+        comments = cursor.execute('SELECT * FROM comments ORDER BY id;').fetchall()
 
-    comments_dif = set(comments) ^ set(test_post_output.COMMENTS)
-    posts_dif = set(posts) ^ set(test_post_output.POSTS)
-
-    assert not comments_dif
-    assert not posts_dif
+    assert comments == test_post_output.COMMENTS
+    assert posts == test_post_output.POSTS
