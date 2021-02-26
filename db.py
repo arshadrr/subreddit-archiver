@@ -8,13 +8,13 @@ def get_schema():
     with open(config.SCHEMA_FILE) as f:
         return f.read()
 
-def get_connection(name):
-    if not os.path.exists(name):
-        with sqlite3.connect(name) as conn:
+def get_connection(file_name):
+    if not os.path.exists(file_name):
+        with sqlite3.connect(file_name) as conn:
             cur = conn.cursor()
             cur.executescript(get_schema())
 
-    return sqlite3.connect(name)
+    return sqlite3.connect(file_name)
 
 def insert_posts(db_connection, posts):
     cursor = db_connection.cursor()

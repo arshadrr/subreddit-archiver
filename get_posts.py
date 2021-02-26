@@ -20,8 +20,6 @@ def get_posts(reddit, out_file):
         last_post = states.get_last_post()
     except KeyError:
         last_post = None
-    # TODO validate the values subreddit can take. ensure db.get_connection will
-    # create reasomably names files (perhaps the name might include slashes)
     subreddit = states.get_subreddit()
     db_connection = db.get_connection(out_file)
 
