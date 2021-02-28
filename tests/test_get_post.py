@@ -39,7 +39,7 @@ def setup_states(db_connection):
 def test_get_post(mock_reddit, setup_states, test_post_output, db_connection):
     reddit = mock_reddit
 
-    get_posts.get_posts(reddit, db_connection)
+    get_posts.get_posts(reddit, db_connection, 100)
 
     cursor = db_connection.cursor()
     posts = cursor.execute('SELECT * FROM posts ORDER BY id;').fetchall()
