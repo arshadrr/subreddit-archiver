@@ -1,20 +1,19 @@
 import praw
 
 import states
-import config
 import serializer
 import db
 
 
-def get_post_batch(reddit, subreddit, last_post):
+def get_post_batch(reddit, subreddit, last_post, batch_size):
     posts = reddit.subreddit(subreddit).new(
-            limit=config.BATCH_SIZE,
+            limit=batch_size,
             params={'after': last_post}
             )
 
     return list(posts)
 
-def get_posts(reddit, db_connection):
+def get_posts(reddit, db_connection, batch_size):
     #TODO: work without credentials
     state = states.State(db_connection)
     try:
@@ -23,7 +22,7 @@ def get_posts(reddit, db_connection):
         last_post = None
     subreddit = state.get_subreddit()
 
-    posts = get_post_batch(reddit, subreddit, last_post)
+    posts = get_post_batch(reddit, subreddit, last_post, batch_size)
 
     while posts:
         # get all the comments for each post
@@ -54,4 +53,4 @@ def get_posts(reddit, db_connection):
         last_post = posts[-1].name
         state.set_last_post(last_post)
 
-        posts = get_post_batch(reddit, subreddit, last_post)
+        posts = get_post_batch(reddit, subreddit, last_post, batch_size)

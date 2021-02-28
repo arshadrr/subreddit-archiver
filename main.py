@@ -11,7 +11,7 @@ import states
 import get_posts
 
 
-def archive(subreddit, out_file):
+def archive(subreddit, out_file, batch_size):
     # TODO: validate if a subreddit exists
     db_connection = db.get_connection(out_file)
     state = states.State(db_connection)
@@ -22,7 +22,7 @@ def archive(subreddit, out_file):
 
     if state.get_progress() == state.Progress.SAVING_POSTS:
         reddit = praw.Reddit()
-        get_posts.get_posts(reddit, db_connection)
+        get_posts.get_posts(reddit, db_connection, batch_size)
 
         state.set_progress(state.Progress.COMPLETED)
 
@@ -35,6 +35,6 @@ if __name__ == "__main__":
     args = cli.get_arg_parser().parse_args()
 
     if args.command == "archive":
-        archive(args.subreddit, args.file)
+        archive(args.subreddit, args.file, args.batch_size)
     else:
         print("update command not implemented")
