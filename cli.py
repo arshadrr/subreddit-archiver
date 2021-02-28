@@ -1,5 +1,7 @@
 import argparse
 
+import validators
+
 DESCRIPTION = """Archive and keep up-to-date an archive of a subreddit."""
 
 ARCHIVE_DESCRIPTION = """Saves posts and comments from a subreddit to a sqlite
@@ -13,17 +15,6 @@ newest post within them. This command saves posts (and comments under these)
 newer than the newest post in the archive. Changes to older posts and comments
 will not be added. Comments made after a post was saved to an archive will not
 be added."""
-
-def validate_batch_size(string):
-    try:
-        batch_size = int(string)
-    except ValueError:
-        raise argparse.ArgumentTypeError("batch size must be an integer")
-
-    if not batch_size > 0:
-        raise argparse.ArgumentTypeError("batch size must be larger than 0")
-
-    return batch_size
 
 def get_arg_parser():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
@@ -42,7 +33,7 @@ def get_arg_parser():
             )
     archive_parser.add_argument(
             "--batch-size",
-            type=validate_batch_size,
+            type=validators.validate_batch_size,
             default=100,
             help="Number of posts to fetch from from the Reddit API with each\
             request. Defaults to 100."
@@ -70,7 +61,7 @@ def get_arg_parser():
             )
     update_parser.add_argument(
             "--batch-size",
-            type=validate_batch_size,
+            type=validators.validate_batch_size,
             default=100,
             help="Number of posts to fetch from from the Reddit API with each\
             request. Defaults to 100."
