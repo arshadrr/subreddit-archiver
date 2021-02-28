@@ -6,7 +6,6 @@ import praw
 
 import cli
 import db
-import config
 import states
 import get_posts
 
@@ -30,8 +29,6 @@ def archive(subreddit, out_file, batch_size):
         print("completed archiving")
 
 if __name__ == "__main__":
-    logging.basicConfig(filename=config.LOG_FILE, filemode="a", level=logging.INFO)
-
     args = cli.get_arg_parser().parse_args()
 
     if args.command == "archive":
