@@ -34,7 +34,7 @@ def insert_comments(db_connection, comments):
 
 def set_kv(db_connection, key, value):
     cursor = db_connection.cursor()
-    cursor.execute('INSERT INTO archive_metadata VALUES (?, ?)', (key, value))
+    cursor.execute('INSERT OR REPLACE INTO archive_metadata VALUES (?, ?)', (key, value))
     db_connection.commit()
 
 def get_kv(db_connection, key):
