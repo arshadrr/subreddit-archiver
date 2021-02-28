@@ -12,6 +12,8 @@ import get_posts
 
 def archive(subreddit, out_file, batch_size):
     # TODO: validate if a subreddit exists
+    # TODO: show archival progress
+    # TODO: implement update functionality
     db_connection = db.get_connection(out_file)
     state = states.State(db_connection)
 
