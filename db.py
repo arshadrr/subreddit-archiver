@@ -1,11 +1,11 @@
 import sqlite3
 import os
 
-import config
 
+SCHEMA_FILE = "schema.sql"
 
 def get_schema():
-    with open(config.SCHEMA_FILE) as f:
+    with open(SCHEMA_FILE) as f:
         return f.read()
 
 def get_connection(file_name):

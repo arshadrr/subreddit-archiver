@@ -1,6 +1,5 @@
 import enum
 
-import config
 import db
 
 class DB(enum.Enum):
