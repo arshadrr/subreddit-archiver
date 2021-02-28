@@ -17,17 +17,17 @@ def archive(subreddit, out_file, batch_size):
     db_connection = db.get_connection(out_file)
     state = states.State(db_connection)
 
-    if state.get_progress() == state.Progress.IDLE:
+    if state.get_progress() == states.Progress.IDLE:
         state.set_subreddit(subreddit)
-        state.set_progress(state.Progress.SAVING_POSTS)
+        state.set_progress(states.Progress.SAVING_POSTS)
 
-    if state.get_progress() == state.Progress.SAVING_POSTS:
+    if state.get_progress() == states.Progress.SAVING_POSTS:
         reddit = praw.Reddit()
         get_posts.get_posts(reddit, db_connection, batch_size)
 
-        state.set_progress(state.Progress.COMPLETED)
+        state.set_progress(states.Progress.COMPLETED)
 
-    if state.get_progress() == state.Progress.COMPLETED:
+    if state.get_progress() == states.Progress.COMPLETED:
         print("completed archiving")
 
 if __name__ == "__main__":
