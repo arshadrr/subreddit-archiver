@@ -51,6 +51,12 @@ def get_arg_parser():
             help="Location and name of file that output sqlite database should take.\
             e.g ~/archives/mysubreddit.sqlite"
             )
+    archive_parser_required.add_argument(
+            "--credentials",
+            required=True,
+            type=validators.validate_credentials_file,
+            help="File containing credentials to access Reddit API."
+            )
 
     # arguments for the update command
     update_parser = subparser.add_parser(
@@ -72,6 +78,12 @@ def get_arg_parser():
             "--file",
             required=True,
             help="Path to existing archive that should be updated."
+            )
+    update_parser_required.add_argument(
+            "--credentials",
+            required=True,
+            type=validators.validate_credentials_file,
+            help="File containing credentials to access Reddit API."
             )
 
     return parser
