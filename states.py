@@ -45,7 +45,7 @@ class State:
 
     def get_progress(self):
         try:
-            progress = Progress(self.get_key(DB.PROGRESS))
+            progress = Progress(int(self.get_key(DB.PROGRESS)))
         except KeyError:
             progress = Progress.IDLE
             self.set_key(DB.PROGRESS, Progress.IDLE.value)
