@@ -14,7 +14,6 @@ def get_post_batch(reddit, subreddit, last_post, batch_size):
     return list(posts)
 
 def get_posts(reddit, db_connection, batch_size):
-    #TODO: work without credentials
     state = states.State(db_connection)
     try:
         last_post = state.get_last_post()
