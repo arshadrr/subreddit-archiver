@@ -1,7 +1,3 @@
-import logging
-import warnings
-import sys
-
 import praw
 
 import cli
@@ -32,7 +28,7 @@ def archive(subreddit, out_file, batch_size, credentials):
 
     if state.get_progress() == states.Progress.SAVING_POSTS:
         reddit = praw.Reddit()
-        get_posts.get_posts(reddit, db_connection, batch_size)
+        get_posts.archive_posts(reddit, db_connection, batch_size)
 
         state.set_progress(states.Progress.COMPLETED)
 
