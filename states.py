@@ -7,7 +7,8 @@ class DB(enum.Enum):
 
     PROGRESS = "archival_progress"
     SUBREDDIT = "subreddit"
-    LAST_POST = "last_saved_post"
+    MOST_RECENT_POST = "most_recent_saved_post"
+    LEAST_RECENT_POST = "least_recent_saved_post"
 
 class Progress(enum.Enum):
     """Values the DB.PROGRESS key can take in the db"""
@@ -61,8 +62,14 @@ class State:
     def set_subreddit(self, subreddit):
         self.set_key(DB.SUBREDDIT, subreddit)
 
-    def get_last_post(self):
-        return self.get_key(DB.LAST_POST)
+    def get_least_recent_post(self):
+        return self.get_key(DB.LEAST_RECENT_POST)
 
-    def set_last_post(self, last_post_id):
-        self.set_key(DB.LAST_POST, last_post_id)
+    def set_least_recent_post(self, least_recent_post_id):
+        self.set_key(DB.LEAST_RECENT_POST, least_recent_post_id)
+
+    def get_most_recent_post(self):
+        return self.get_key(DB.MOST_RECENT_POST)
+
+    def set_most_recent_post(self, most_recent_post_id):
+        self.set_key(DB.MOST_RECENT_POST, most_recent_post_id)
