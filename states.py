@@ -7,6 +7,7 @@ class DB(enum.Enum):
 
     PROGRESS = "archival_progress"
     SUBREDDIT = "subreddit"
+    CREATED_UTC = "subreddit_created_utc"
     MOST_RECENT_POST = "most_recent_saved_post"
     LEAST_RECENT_POST = "least_recent_saved_post"
 
@@ -73,3 +74,9 @@ class State:
 
     def set_most_recent_post(self, most_recent_post_id):
         self.set_key(DB.MOST_RECENT_POST, most_recent_post_id)
+
+    def get_subreddit_created_utc(self):
+        self.get_key(DB.CREATED_UTC)
+
+    def set_subreddit_created_utc(self, created_utc):
+        self.set_key(DB.CREATED_UTC, created_utc)
