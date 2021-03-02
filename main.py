@@ -23,6 +23,7 @@ def archive(subreddit, out_file, batch_size, credentials):
 
     if state.get_progress() == states.Progress.IDLE:
         state.set_subreddit(subreddit)
+        state.set_subreddit_created_utc(reddit.subreddit(subreddit).created_utc)
         state.set_progress(states.Progress.SAVING_POSTS)
 
     if state.get_progress() == states.Progress.SAVING_POSTS:
