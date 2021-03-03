@@ -1,7 +1,8 @@
 import time
 
-ARCHIVAL_PROGRESS_STRING = """Saved {0} posts more. Covered {1}% of subreddit \
+ARCHIVAL_PROGRESS_STRING = """Saved {0} posts more. Covered {1}% of subreddit 
 lifespan\r"""
+UPDATE_PROGRESS_STRING = """Saved {0} up to {1}\r"""
 
 class ArchiveProgressbar:
     def __init__(self, subreddit_created_utc, most_recent_post_utc):
@@ -30,3 +31,21 @@ class ArchiveProgressbar:
 
     def done(self):
         print("\n")
+
+class UpdateProgressbar:
+    def __init__(self, most_recent_post_utc):
+        self.posts_saved = 0
+        print(f"Newest post in archive is from {time.ctime(most_recent_post_utc)}")
+
+    def tick(self, most_recent_post_utc, posts_saved):
+        self.posts_saved += posts_saved
+        print(
+                UPDATE_PROGRESS_STRING.format(
+                    self.posts_saved,
+                    time.ctime(most_recent_post_utc)
+                    ),
+                end=""
+                )
+
+    def done(self):
+        print("\nCompleted updating")

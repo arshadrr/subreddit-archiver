@@ -77,15 +77,18 @@ def update_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
     newest_post_id = state.get_most_recent_post()
     subreddit = state.get_subreddit()
+    progressbar = progressbars.UpdateProgressbar(state.get_most_recent_post_utc())
 
     posts = get_post_batch(reddit, subreddit, batch_size, newest_post_id, False)
 
     while posts:
         process_post_batch(posts, db_connection)
-        print(f"Saved {len(posts)} posts")
 
         newest_post = posts[0]
         state.set_most_recent_post(newest_post.name)
         state.set_most_recent_post_utc(newest_post.created_utc)
+        progressbar.tick(newest_post.created_utc, len(posts))
 
-        posts = get_post_batch(reddit, subreddit, batch_size, newest_post, False)
+        posts = get_post_batch(reddit, subreddit, batch_size, newest_post.name, False)
+
+    progressbar.done()
