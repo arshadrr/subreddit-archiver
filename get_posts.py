@@ -3,6 +3,7 @@ import praw
 import states
 import serializer
 import db
+import progressbars
 
 
 def get_post_batch(reddit, subreddit, batch_size, post_id, after):
@@ -45,39 +46,46 @@ def process_post_batch(posts, db_connection):
 def archive_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
     try:
-        last_post = state.get_least_recent_post()
+        last_post_id = state.get_least_recent_post()
     except KeyError:
-        last_post = None
+        last_post_id = None
     subreddit = state.get_subreddit()
 
-    posts = get_post_batch(reddit, subreddit, batch_size, last_post, True)
-    try:
-        state.get_most_recent_post()
-    except KeyError:
-        newest_post = posts[0].name
-        state.set_most_recent_post(newest_post)
+    posts = get_post_batch(reddit, subreddit, batch_size, last_post_id, True)
+    # we've just begun archival and these metadata need to be set
+    if last_post_id == None:
+        newest_post = posts[0]
+        state.set_most_recent_post(newest_post.name)
+        state.set_most_recent_post_utc(newest_post.created_utc)
+    progressbar = progressbars.ArchiveProgressbar(
+            state.get_subreddit_created_utc(),
+            state.get_most_recent_post_utc()
+            )
 
     while posts:
         process_post_batch(posts, db_connection)
-        print(f"Saved {len(posts)} posts")
 
-        last_post = posts[-1].name
-        state.set_least_recent_post(last_post)
+        last_post = posts[-1]
+        state.set_least_recent_post(last_post.name)
+        progressbar.tick(last_post.created_utc, len(posts))
 
-        posts = get_post_batch(reddit, subreddit, batch_size, last_post, True)
+        posts = get_post_batch(reddit, subreddit, batch_size, last_post.name, True)
+
+    progress.done()
 
 def update_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
-    newest_post = state.get_most_recent_post()
+    newest_post_id = state.get_most_recent_post()
     subreddit = state.get_subreddit()
 
-    posts = get_post_batch(reddit, subreddit, batch_size, newest_post, False)
+    posts = get_post_batch(reddit, subreddit, batch_size, newest_post_id, False)
 
     while posts:
         process_post_batch(posts, db_connection)
         print(f"Saved {len(posts)} posts")
 
-        newest_post = posts[0].name
-        state.set_most_recent_post(newest_post)
+        newest_post = posts[0]
+        state.set_most_recent_post(newest_post.name)
+        state.set_most_recent_post_utc(newest_post.created_utc)
 
         posts = get_post_batch(reddit, subreddit, batch_size, newest_post, False)

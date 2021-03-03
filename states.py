@@ -10,6 +10,7 @@ class DB(enum.Enum):
     CREATED_UTC = "subreddit_created_utc"
     MOST_RECENT_POST = "most_recent_saved_post"
     LEAST_RECENT_POST = "least_recent_saved_post"
+    MOST_RECENT_POST_UTC = "most_recent_saved_post_utc"
 
 class Progress(enum.Enum):
     """Values the DB.PROGRESS key can take in the db"""
@@ -76,7 +77,13 @@ class State:
         self.set_key(DB.MOST_RECENT_POST, most_recent_post_id)
 
     def get_subreddit_created_utc(self):
-        self.get_key(DB.CREATED_UTC)
+        return int(float(self.get_key(DB.CREATED_UTC)))
 
     def set_subreddit_created_utc(self, created_utc):
         self.set_key(DB.CREATED_UTC, created_utc)
+
+    def get_most_recent_post_utc(self):
+        return int(float(self.get_key(DB.MOST_RECENT_POST_UTC)))
+
+    def set_most_recent_post_utc(self, most_recent_post_id_utc):
+        self.set_key(DB.MOST_RECENT_POST_UTC, most_recent_post_id_utc)
