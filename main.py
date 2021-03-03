@@ -12,7 +12,6 @@ USER_AGENT = "subreddit-archiver"
 @utils.clean_exit
 def archive(subreddit, out_file, batch_size, credentials):
     # TODO: validate if a subreddit exists
-    # TODO: show archival progress
     reddit = praw.Reddit(
             client_id = credentials.client_id,
             client_secret = credentials.client_secret,
