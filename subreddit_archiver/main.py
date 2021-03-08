@@ -1,10 +1,13 @@
 import praw
 
-import cli
-import db
-import states
-import get_posts
-import utils
+from subreddit_archiver import (
+        cli,
+        db,
+        states,
+        get_posts,
+        utils
+        )
+
 
 USER_AGENT = "subreddit-archiver"
 
@@ -50,7 +53,7 @@ def update(out_file, batch_size, credentials):
 
     get_posts.update_posts(reddit, db_connection, batch_size)
 
-if __name__ == "__main__":
+def main():
     args = cli.get_arg_parser().parse_args()
 
     if args.command == "archive":

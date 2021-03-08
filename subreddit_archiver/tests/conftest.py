@@ -2,7 +2,7 @@ import pickle
 
 import pytest
 
-import db
+from subreddit_archiver import db
 
 @pytest.fixture
 def db_connection(tmpdir):

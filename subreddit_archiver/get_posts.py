@@ -1,9 +1,11 @@
 import praw
 
-import states
-import serializer
-import db
-import progressbars
+from subreddit_archiver import (
+        states,
+        serializer,
+        db,
+        progressbars
+        )
 
 
 def get_post_batch(reddit, subreddit, batch_size, post_id, after):
