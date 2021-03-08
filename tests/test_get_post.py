@@ -37,6 +37,7 @@ def mock_reddit(praw_post_obj):
 def setup_states(db_connection):
     state = states.State(db_connection)
     state.set_subreddit('learnart')
+    state.set_subreddit_created_utc(0)
 
 def test_archive_post(mock_reddit, setup_states, test_post_output, db_connection):
     reddit = mock_reddit
