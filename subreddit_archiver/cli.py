@@ -1,6 +1,6 @@
 import argparse
 
-import validators
+from subreddit_archiver import validators
 
 DESCRIPTION = """Archive and keep up-to-date an archive of a subreddit."""
 

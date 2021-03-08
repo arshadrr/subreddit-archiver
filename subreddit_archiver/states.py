@@ -1,6 +1,6 @@
 import enum
 
-import db
+from subreddit_archiver import db
 
 class DB(enum.Enum):
     """Keys that the dbm that keeps track of states can take"""

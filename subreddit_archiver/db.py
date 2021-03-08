@@ -2,7 +2,8 @@ import sqlite3
 import os
 
 
-SCHEMA_FILE = "schema.sql"
+here = os.path.abspath(os.path.dirname(__file__))
+SCHEMA_FILE = here + "/" + "schema.sql"
 
 def get_schema():
     with open(SCHEMA_FILE) as f:

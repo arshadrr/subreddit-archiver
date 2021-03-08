@@ -3,8 +3,10 @@ import json
 
 import pytest
 
-import get_posts
-import states
+from subreddit_archiver import (
+        get_posts,
+        states
+        )
 
 
 @pytest.fixture

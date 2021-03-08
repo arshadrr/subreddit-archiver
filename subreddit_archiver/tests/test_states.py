@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-import states
+from subreddit_archiver import states
 
 
 def test_states(db_connection):
