@@ -73,7 +73,7 @@ def archive_posts(reddit, db_connection, batch_size):
 
         posts = get_post_batch(reddit, subreddit, batch_size, last_post.name, True)
 
-    progress.done()
+    progressbar.done()
 
 def update_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
