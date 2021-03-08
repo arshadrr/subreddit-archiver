@@ -1,6 +1,6 @@
 import time
 
-ARCHIVAL_PROGRESS_STRING = """Saved {0} posts more. Covered {1}% of subreddit 
+ARCHIVAL_PROGRESS_STRING = """Saved {0} posts more. Covered {1}% of subreddit \
 lifespan\r"""
 UPDATE_PROGRESS_STRING = """Saved {0} up to {1}\r"""
 
