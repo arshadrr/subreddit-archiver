@@ -115,5 +115,26 @@ Completed updating
 ```
 
 ## Credentials
+To use the Reddit API, this application will need to be provided with API
+credentials from Reddit. Follow these instructions to get these:
+
+1. Visit https://www.reddit.com/prefs/apps and click on the button `are you a developer?  create an app...` towards the end of the page.
+2. Choose the 'script' option in the list of radio buttons. Give the app a
+   name and a redirect-url (anything will do, the values you enter don't really
+   matter).
+3. Copy the text that follows the label `secret` and keep hold of it. This is your `client_secret`.
+4. Beneath the text 'personal use script', you'll find a random string of
+   letters. Copy this too, it is your `client_id`.
+5. Create a text file and paste the `client_id` and `client_secret` in the
+   format below:
+
+```
+[DEFAULT]
+client_id=<insert your client id here>
+client_secret=<insert your client secret here>
+```
+
+This will be your credentials file. When using this utility, pass the location
+of this file to the `--credentials` option.
 
 ## Schema
