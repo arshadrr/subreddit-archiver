@@ -157,11 +157,11 @@ archive_metadata  comments          posts
 
 - `archive_metadata`: stores some metadata about the archive. The specific
   information stored can be found listed in the file
-  [states.py](../subreddit_archiver/states.py) in the class
+  [states.py](./subreddit_archiver/states.py) in the class
   `DB`.
 - `posts`: stores the posts with each row representing one post.
-  [schema.sql](../subreddit_archiver/schema.sql)
+  [schema.sql](./subreddit_archiver/schema.sql)
   contains inline comments explaining the columns that make up this table and how to use them
 - `comments`: stores posts with each row representing one post. As with the
-  `posts` table, refer to [schema.sql](../subreddit_archiver/schema.sql) for
+  `posts` table, refer to [schema.sql](./subreddit_archiver/schema.sql) for
   more.
