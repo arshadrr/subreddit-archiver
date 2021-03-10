@@ -3,20 +3,29 @@ import enum
 from subreddit_archiver import db
 
 class DB(enum.Enum):
-    """Keys that the dbm that keeps track of states can take"""
+    """Keys that the table archive_metadata keeps track of"""
 
+    # stores a value of the Progress enum, represents the state of archival
     PROGRESS = "archival_progress"
+    # the name of the subreddit being archivedd
     SUBREDDIT = "subreddit"
+    # when the subreddit was created, as a unix timestamp
     CREATED_UTC = "subreddit_created_utc"
+    # the post id of the newest post in the archive
     MOST_RECENT_POST = "most_recent_saved_post"
+    # the post id of the oldest most in the archive
     LEAST_RECENT_POST = "least_recent_saved_post"
+    # when the newest post in the archive was created, as a unix timestamp
     MOST_RECENT_POST_UTC = "most_recent_saved_post_utc"
 
 class Progress(enum.Enum):
     """Values the DB.PROGRESS key can take in the db"""
 
+    # conveys that archival has not yet begun
     IDLE = 1
+    # conveys that archival has begun and is in progress
     SAVING_POSTS = 2
+    # conveys that archival is complete
     COMPLETED = 3
 
 
