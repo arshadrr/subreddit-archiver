@@ -50,6 +50,7 @@ def update(out_file, batch_size, credentials):
         state.get_most_recent_post()
     except KeyError:
         print("Unable to update archive. No posts have been saved yet.")
+        exit(1)
 
     get_posts.update_posts(reddit, db_connection, batch_size)
 
