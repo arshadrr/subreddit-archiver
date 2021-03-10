@@ -24,7 +24,7 @@ $ pipx install .
 
 ## Usage
 
-Once installed, the utlity can be invoked as `subreddit-archiver` in
+Once installed, the utility can be invoked as `subreddit-archiver` in
 your terminal. The utility comes with two commands, `subreddit-archiver archive`
 which archives (saves posts from the present to the past, all the way up to the
 oldest post in the subreddit if allowed to run long enough) and
@@ -37,7 +37,7 @@ how to acquire these, and the format the configuration file should take is
 described in the section [Credentials](#credentials)
 
 The output of this utility is a SQLite database. For information on the
-structure and how to make use of what this programn produces, see
+structure and how to make use of what this program produces, see
 [Schema](#schema).
 
 ```
@@ -60,11 +60,11 @@ optional arguments:
 required arguments:
   --subreddit SUBREDDIT
                         Name of subreddit to save.
-  --file FILE           Location and name of file that output sqlite database should take. e.g ~/archives/mysubreddit.sqlite
+  --file FILE           Location and name of file that output SQLite database should take. e.g ~/archives/mysubreddit.sqlite
   --credentials CREDENTIALS
                         File containing credentials to access Reddit API.
 
-Saves posts and comments from a subreddit to a sqlite database. Archival can be
+Saves posts and comments from a subreddit to a SQLite database. Archival can be
 stopped (e.g Ctr-C) while in progress safely and without data loss. To resume
 archival, call with the same arguments (point to the same output file and
 subreddit). The output file keeps track of the progress of archival.
@@ -104,7 +104,7 @@ added. Comments made after a post was saved to an archive will not be added.
 
 Suppose you used this tool to create an archive of the `/r/learnart` subreddit.
 A few days pass and new posts have been submitted which aren't part of your
-archive. To fetch posts submitted since the most recent post in your arcive, use
+archive. To fetch posts submitted since the most recent post in your archive, use
 this command.
 
 ```
@@ -162,6 +162,6 @@ archive_metadata  comments          posts
 - `posts`: stores the posts with each row representing one post.
   [schema.sql](./subreddit_archiver/schema.sql)
   contains inline comments explaining the columns that make up this table and how to use them
-- `comments`: stores posts with each row representing one post. As with the
+- `comments`: stores comments with each row representing one comment. As with the
   `posts` table, refer to [schema.sql](./subreddit_archiver/schema.sql) for
   more.
