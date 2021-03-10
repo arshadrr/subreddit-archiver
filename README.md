@@ -121,7 +121,7 @@ credentials from Reddit. Follow these instructions to get these:
 1. Visit https://www.reddit.com/prefs/apps and click on the button `are you a developer?  create an app...` towards the end of the page.
 2. Choose the 'script' option in the list of radio buttons. Give the app a
    name and a redirect-url (anything will do, the values you enter don't really
-   matter).
+   matter). Create the app.
 3. Copy the text that follows the label `secret` and keep hold of it. This is your `client_secret`.
 4. Beneath the text 'personal use script', you'll find a random string of
    letters. Copy this too, it is your `client_id`.
@@ -138,3 +138,30 @@ This will be your credentials file. When using this utility, pass the location
 of this file to the `--credentials` option.
 
 ## Schema
+You've saved a bunch of posts. Now what? This section describes what the SQLite
+database this utility produces looks like so that you can put it to use. It
+required you either install the [SQLite command-line shell](https://sqlite.org/cli.html) or have bindings for SQLite in your
+programming language such as [sqlite3](https://docs.python.org/3/library/sqlite3.html) for Python.  
+
+
+The output database will contain three tables, `archive_metadata`, `comments`
+and `posts`:
+```
+$ sqlite3 learnart.sqlite
+-- Loading resources from /home/user/.sqliterc
+SQLite version 3.30.0 2019-10-04 15:03:17
+Enter ".help" for usage hints.
+sqlite> .tables
+archive_metadata  comments          posts
+```
+
+- `archive_metadata`: stores some metadata about the archive. The specific
+  information stored can be found listed in the file
+  [states.py](../subreddit_archiver/states.py) in the class
+  `DB`.
+- `posts`: stores the posts with each row representing one post.
+  [schema.sql](../subreddit_archiver/schema.sql)
+  contains inline comments explaining the columns that make up this table and how to use them
+- `comments`: stores posts with each row representing one post. As with the
+  `posts` table, refer to [schema.sql](../subreddit_archiver/schema.sql) for
+  more.
