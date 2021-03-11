@@ -5,6 +5,10 @@ complete archives can then be updates with newer posts submitted since the
 archival. Allows you to have your personal copy of a subreddit for safekeeping,
 analysis, etc.
 
+This tool makes uses of [pushshift.io](https://pushshift.io/), a volunteer-run
+service. If you found this tool useful, you can [donate to pushshift.io](https://pushshift.io/donations/) 
+as it makes this tool possible.
+
 ## Installation
 
 Clone this repository

@@ -11,12 +11,10 @@ class DB(enum.Enum):
     SUBREDDIT = "subreddit"
     # when the subreddit was created, as a unix timestamp
     CREATED_UTC = "subreddit_created_utc"
-    # the post id of the newest post in the archive
-    MOST_RECENT_POST = "most_recent_saved_post"
-    # the post id of the oldest most in the archive
-    LEAST_RECENT_POST = "least_recent_saved_post"
     # when the newest post in the archive was created, as a unix timestamp
     MOST_RECENT_POST_UTC = "most_recent_saved_post_utc"
+    # when the least post in the archive was created, as a unix timestamp
+    LEAST_RECENT_POST_UTC = "least_recent_saved_post_utc"
 
 class Progress(enum.Enum):
     """Values the DB.PROGRESS key can take in the db"""
@@ -73,18 +71,6 @@ class State:
     def set_subreddit(self, subreddit):
         self.set_key(DB.SUBREDDIT, subreddit)
 
-    def get_least_recent_post(self):
-        return self.get_key(DB.LEAST_RECENT_POST)
-
-    def set_least_recent_post(self, least_recent_post_id):
-        self.set_key(DB.LEAST_RECENT_POST, least_recent_post_id)
-
-    def get_most_recent_post(self):
-        return self.get_key(DB.MOST_RECENT_POST)
-
-    def set_most_recent_post(self, most_recent_post_id):
-        self.set_key(DB.MOST_RECENT_POST, most_recent_post_id)
-
     def get_subreddit_created_utc(self):
         return int(float(self.get_key(DB.CREATED_UTC)))
 
@@ -96,3 +82,9 @@ class State:
 
     def set_most_recent_post_utc(self, most_recent_post_id_utc):
         self.set_key(DB.MOST_RECENT_POST_UTC, most_recent_post_id_utc)
+
+    def get_least_recent_post_utc(self):
+        return int(float(self.get_key(DB.LEAST_RECENT_POST_UTC)))
+
+    def set_least_recent_post_utc(self, least_recent_post_id_utc):
+        self.set_key(DB.LEAST_RECENT_POST_UTC, least_recent_post_id_utc)
