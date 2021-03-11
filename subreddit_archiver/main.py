@@ -47,7 +47,7 @@ def update(out_file, batch_size, credentials):
     state = states.State(db_connection)
 
     try:
-        state.get_most_recent_post()
+        state.get_most_recent_post_utc()
     except KeyError:
         print("Unable to update archive. No posts have been saved yet.")
         exit(1)
