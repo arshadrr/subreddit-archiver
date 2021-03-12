@@ -1,4 +1,5 @@
 import praw
+import prawcore
 import requests
 
 from subreddit_archiver import (
@@ -39,6 +40,10 @@ def process_post_batch(posts, db_connection):
         while True:
             try:
                 post.comments.replace_more(limit=None)
+                break
+            # some posts are removed and 404
+            except prawcore.exceptions.NotFound:
+                posts.remove(post)
                 break
             except praw.exceptions.APIException:
                 time.sleep(1)
