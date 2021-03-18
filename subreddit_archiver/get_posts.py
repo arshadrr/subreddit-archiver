@@ -23,13 +23,37 @@ def make_pushshift_url(subreddit, batch_size, post_utc, after):
 
     return url
 
-def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
-    # TODO network errors
-    # TODO keeps showing removed and deleted posts
+def get_from_pushshift(subreddit, batch_size, post_utc, after):
     url = make_pushshift_url(subreddit, batch_size, post_utc, after)
     request = requests.get(url)
 
-    post_ids = [post['id'] for post in request.json()['data']]
+    data = request.json()['data']
+    post_ids = [post['id'] for post in data]
+
+    return post_ids
+
+def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
+    '''Get a batch of posts from reddit
+
+    Args:
+        post_utc: a unix timestamp. what it represents depends on the value of
+                  the 'after' parameter
+        after: conveys if 'batch_size' posts should be fetched from after
+               'post_utc' or before 'post_utc'.
+
+               If True, go into the future, getting posts newer than those in
+               the database. If False, go into the past, getting posts older
+               than in the database.
+
+               Will be True when updating the database with newer posts, and
+               False when inserting older posts into the database
+    '''
+    # TODO network errors 
+    # TODO keeps showing removed and deleted posts
+    # Each subreddit's 'new' page only allows to go back 1000 posts in the past.
+    # To mitigate this, get post ids from pushshift.io and then fetch posts from
+    # the reddit API using these post ids.
+    post_ids = get_from_pushshift(subreddit, batch_size, post_utc, after)
     posts = map(reddit.submission, post_ids)
 
     return list(posts)
@@ -64,15 +88,19 @@ def process_post_batch(posts, db_connection):
 
 def archive_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
+    # get the oldest post in the database to continue from
     try:
         last_post_utc = state.get_least_recent_post_utc()
     except KeyError:
         last_post_utc = None
+    # get the subreddit the database is archiving
     subreddit = state.get_subreddit()
 
     posts = get_post_batch(reddit, subreddit, batch_size, last_post_utc, False)
-    # we've just begun archival and these metadata need to be set
+    # this is the first run of archiving, set these metadata in the database
     if last_post_utc == None:
+        # set the newest post in the database to be the newest post in the batch
+        # of posts just saved. this information is used for updating the archive
         newest_post = posts[0]
         state.set_most_recent_post_utc(newest_post.created_utc)
     progressbar = progressbars.ArchiveProgressbar(
@@ -84,7 +112,10 @@ def archive_posts(reddit, db_connection, batch_size):
         process_post_batch(posts, db_connection)
 
         last_post_utc = posts[-1].created_utc
+        # set the oldest post in the database to be the oldest from the batch of
+        # posts just saved
         state.set_least_recent_post_utc(last_post_utc)
+        # update the progress bar
         progressbar.tick(last_post_utc, len(posts))
 
         posts = get_post_batch(reddit, subreddit, batch_size, last_post_utc, False)
@@ -92,6 +123,7 @@ def archive_posts(reddit, db_connection, batch_size):
     progressbar.done()
 
 def update_posts(reddit, db_connection, batch_size):
+    # load required information from the database
     state = states.State(db_connection)
     newest_post_utc = state.get_most_recent_post_utc()
     subreddit = state.get_subreddit()
@@ -103,7 +135,10 @@ def update_posts(reddit, db_connection, batch_size):
         process_post_batch(posts, db_connection)
 
         newest_post_utc = posts[0].created_utc
+        # set the newest post in the database to be the newest from the batch of
+        # posts just saved
         state.set_most_recent_post_utc(newest_post_utc)
+        # update the progress bar
         progressbar.tick(newest_post_utc, len(posts))
 
         posts = get_post_batch(reddit, subreddit, batch_size, newest_post_utc, True)
