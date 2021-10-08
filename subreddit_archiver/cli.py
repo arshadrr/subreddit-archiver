@@ -16,8 +16,15 @@ newer than the newest post in the archive. Changes to older posts and comments
 will not be added. Comments made after a post was saved to an archive will not
 be added."""
 
+VERSION = "0.0.4"
+
 def get_arg_parser():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
+    parser.add_argument(
+            "--version", "-v",
+            action="version",
+            version="subreddit-archiver " + VERSION
+            )
     subparser = parser.add_subparsers(
             required=True,
             help="Supported commands. Call <command> -h for help on specific commands.",
