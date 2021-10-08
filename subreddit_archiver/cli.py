@@ -16,7 +16,7 @@ newer than the newest post in the archive. Changes to older posts and comments
 will not be added. Comments made after a post was saved to an archive will not
 be added."""
 
-VERSION = "0.0.4"
+VERSION = "0.0.5"
 
 def get_arg_parser():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
