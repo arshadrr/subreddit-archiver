@@ -11,11 +11,19 @@ as it makes this tool possible.
 
 ## Installation
 
-Installing the package requires Python 3.7 or newer. It's recommended you install
+Clone this repository
+```
+$ git clone https://github.com/arshadrr/subreddit-archiver
+```
+`cd` into the directory
+```
+$ cd subreddit-archiver
+```
+Install the package. Requires Python 3.7 or newer. It's recommended you install
 using [pipx](https://pipxproject.github.io/pipx/installation/) (however it does
 work with pip).
 ```
-$ pipx install subreddit-archiver
+$ pipx install .
 ```
 
 ## Usage
