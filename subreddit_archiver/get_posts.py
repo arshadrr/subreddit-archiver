@@ -90,19 +90,22 @@ def archive_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
     # get the oldest post in the database to continue from
     try:
-        last_post_utc = state.get_least_recent_post_utc()
+        oldest_post_utc = state.get_least_recent_post_utc()
     except KeyError:
-        last_post_utc = None
+        oldest_post_utc = None
     # get the subreddit the database is archiving
     subreddit = state.get_subreddit()
 
-    posts = get_post_batch(reddit, subreddit, batch_size, last_post_utc, False)
+    posts = get_post_batch(reddit, subreddit, batch_size, oldest_post_utc,
+            False)
+
     # this is the first run of archiving, set these metadata in the database
-    if last_post_utc == None:
+    if oldest_post_utc == None:
         # set the newest post in the database to be the newest post in the batch
         # of posts just saved. this information is used for updating the archive
         newest_post = posts[0]
         state.set_most_recent_post_utc(newest_post.created_utc)
+
     progressbar = progressbars.ArchiveProgressbar(
             state.get_subreddit_created_utc(),
             state.get_most_recent_post_utc()
@@ -111,14 +114,15 @@ def archive_posts(reddit, db_connection, batch_size):
     while posts:
         process_post_batch(posts, db_connection)
 
-        last_post_utc = posts[-1].created_utc
+        oldest_post_utc = posts[-1].created_utc
         # set the oldest post in the database to be the oldest from the batch of
         # posts just saved
-        state.set_least_recent_post_utc(last_post_utc)
+        state.set_least_recent_post_utc(oldest_post_utc)
         # update the progress bar
-        progressbar.tick(last_post_utc, len(posts))
+        progressbar.tick(oldest_post_utc, len(posts))
 
-        posts = get_post_batch(reddit, subreddit, batch_size, last_post_utc, False)
+        posts = get_post_batch(reddit, subreddit, batch_size, oldest_post_utc,
+                False)
 
     progressbar.done()
 
