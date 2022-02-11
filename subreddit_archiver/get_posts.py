@@ -2,12 +2,7 @@ import praw
 import prawcore
 import requests
 
-from subreddit_archiver import (
-        states,
-        serializer,
-        db,
-        progressbars
-        )
+from subreddit_archiver import states, serializer, db, progressbars
 
 
 def make_pushshift_url(subreddit, batch_size, post_utc, after):
@@ -23,17 +18,23 @@ def make_pushshift_url(subreddit, batch_size, post_utc, after):
 
     return url
 
+
 def get_from_pushshift(subreddit, batch_size, post_utc, after):
     url = make_pushshift_url(subreddit, batch_size, post_utc, after)
     request = requests.get(url)
+    # pushshift sometimes is down. let the user know of this and exit.
+    if request.status_code in range(500, 600):
+        print(f"\nPushshift.io appears to be down. HTTP {request.status_code}. Unable to fetch post IDs. Exiting.")
+        exit(1)
 
-    data = request.json()['data']
-    post_ids = [post['id'] for post in data]
+    data = request.json()["data"]
+    post_ids = [post["id"] for post in data]
 
     return post_ids
 
+
 def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
-    '''Get a batch of posts from reddit
+    """Get a batch of posts from reddit
 
     Args:
         post_utc: a unix timestamp. what it represents depends on the value of
@@ -47,9 +48,9 @@ def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
 
                Will be True when updating the database with newer posts, and
                False when inserting older posts into the database
-    '''
-    # TODO network errors 
-    # TODO keeps showing removed and deleted posts
+    """
+    # TODO handle possible network errors on reddit's side
+
     # Each subreddit's 'new' page only allows to go back 1000 posts in the past.
     # To mitigate this, get post ids from pushshift.io and then fetch posts from
     # the reddit API using these post ids.
@@ -57,6 +58,7 @@ def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
     posts = map(reddit.submission, post_ids)
 
     return list(posts)
+
 
 def process_post_batch(posts, db_connection):
     # get all the comments for each post
@@ -72,7 +74,6 @@ def process_post_batch(posts, db_connection):
             except praw.exceptions.APIException:
                 time.sleep(1)
 
-
     # serialize the posts as serializer.Submission objects
     posts_serialized = map(serializer.Submission, posts)
     # flatten the comment forest
@@ -86,6 +87,7 @@ def process_post_batch(posts, db_connection):
     db.insert_posts(db_connection, posts_serialized)
     db.insert_comments(db_connection, comments_serialized)
 
+
 def archive_posts(reddit, db_connection, batch_size):
     state = states.State(db_connection)
     # get the oldest post in the database to continue from
@@ -96,8 +98,7 @@ def archive_posts(reddit, db_connection, batch_size):
     # get the subreddit the database is archiving
     subreddit = state.get_subreddit()
 
-    posts = get_post_batch(reddit, subreddit, batch_size, oldest_post_utc,
-            False)
+    posts = get_post_batch(reddit, subreddit, batch_size, oldest_post_utc, False)
 
     # this is the first run of archiving, set these metadata in the database
     if oldest_post_utc == None:
@@ -107,9 +108,8 @@ def archive_posts(reddit, db_connection, batch_size):
         state.set_most_recent_post_utc(newest_post.created_utc)
 
     progressbar = progressbars.ArchiveProgressbar(
-            state.get_subreddit_created_utc(),
-            state.get_most_recent_post_utc()
-            )
+        state.get_subreddit_created_utc(), state.get_most_recent_post_utc()
+    )
 
     while posts:
         process_post_batch(posts, db_connection)
@@ -121,10 +121,10 @@ def archive_posts(reddit, db_connection, batch_size):
         # update the progress bar
         progressbar.tick(oldest_post_utc, len(posts))
 
-        posts = get_post_batch(reddit, subreddit, batch_size, oldest_post_utc,
-                False)
+        posts = get_post_batch(reddit, subreddit, batch_size, oldest_post_utc, False)
 
     progressbar.done()
+
 
 def update_posts(reddit, db_connection, batch_size):
     # load required information from the database
