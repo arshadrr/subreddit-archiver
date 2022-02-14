@@ -5,7 +5,17 @@ import requests
 from subreddit_archiver import states, serializer, db, progressbars
 
 
+def get_from_pushshift(url):
+    request = requests.get(url)
+    if request.status_code in range(500, 600):
+        print(f"\nUnable to connect to Pushshift.io, it appears to be down. HTTP {request.status_code}. Exiting.")
+        exit(1)
+
+    data = request.json()['data']
+    return data
+
 def make_pushshift_url(subreddit, batch_size, post_utc, after):
+    # the pushshift.io API is documented at https://github.com/pushshift/api
     url = "https://api.pushshift.io/reddit/search/submission/?"
     url += f"subreddit={subreddit}&size={batch_size}"
     url += "&fields=id&sort=desc"
@@ -19,19 +29,33 @@ def make_pushshift_url(subreddit, batch_size, post_utc, after):
     return url
 
 
-def get_from_pushshift(subreddit, batch_size, post_utc, after):
-    url = make_pushshift_url(subreddit, batch_size, post_utc, after)
-    request = requests.get(url)
-    # pushshift sometimes is down. let the user know of this and exit.
-    if request.status_code in range(500, 600):
-        print(f"\nPushshift.io appears to be down. HTTP {request.status_code}. Unable to fetch post IDs. Exiting.")
-        exit(1)
+def get_ids_from_pushshift(subreddit, batch_size, post_utc, after):
+    # fetch post ids from pushshift.
 
-    data = request.json()["data"]
+    url = make_pushshift_url(subreddit, batch_size, post_utc, after)
+    data = get_from_pushshift(url)
     post_ids = [post["id"] for post in data]
 
     return post_ids
 
+def get_created_utc(post):
+    # when post ids are fetched from pushshift, pushshift sometimes returns
+    # posts that are no longer on reddit. attempting to access the post's
+    # created_utc property raises a 404 error when praw attempts to get this
+    # information from reddit.
+    # 
+    # this function attempts to access the property. if this errors, the
+    # created_utc is fetched from pushshift so that post ids for the next batch
+    # can be retrieved
+    try:
+        return post.created_utc
+    except prawcore.exceptions.NotFound:
+        url = "https://api.pushshift.io/reddit/search/submission/?"
+        url += f"ids={post.id}&fields=created_utc"
+
+        data = get_from_pushshift(url)
+        created_utc = data[0]['created_utc']
+        return created_utc
 
 def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
     """Get a batch of posts from reddit
@@ -42,32 +66,35 @@ def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
         after: conveys if 'batch_size' posts should be fetched from after
                'post_utc' or before 'post_utc'.
 
-               If True, go into the future, getting posts newer than those in
-               the database. If False, go into the past, getting posts older
-               than in the database.
+               If True, go into the future, getting posts after post_utc, i.e,
+               newer posts. If False, go into the past, getting posts before
+               post_utc, i.e, older posts.
 
                Will be True when updating the database with newer posts, and
-               False when inserting older posts into the database
+               False when inserting older posts into the database.
     """
     # TODO handle possible network errors on reddit's side
 
     # Each subreddit's 'new' page only allows to go back 1000 posts in the past.
     # To mitigate this, get post ids from pushshift.io and then fetch posts from
     # the reddit API using these post ids.
-    post_ids = get_from_pushshift(subreddit, batch_size, post_utc, after)
+    post_ids = get_ids_from_pushshift(subreddit, batch_size, post_utc, after)
     posts = map(reddit.submission, post_ids)
 
     return list(posts)
 
 
 def process_post_batch(posts, db_connection):
+    # shallow copy to not mutate what's passed to this function
+    posts = posts[::]
+
     # get all the comments for each post
     for post in posts:
         while True:
             try:
                 post.comments.replace_more(limit=None)
                 break
-            # some posts are removed and 404
+            # some posts that are on pushshift are removed on reddit and 404.
             except prawcore.exceptions.NotFound:
                 posts.remove(post)
                 break
@@ -114,7 +141,7 @@ def archive_posts(reddit, db_connection, batch_size):
     while posts:
         process_post_batch(posts, db_connection)
 
-        oldest_post_utc = posts[-1].created_utc
+        oldest_post_utc = get_created_utc(posts[-1])
         # set the oldest post in the database to be the oldest from the batch of
         # posts just saved
         state.set_least_recent_post_utc(oldest_post_utc)
@@ -138,7 +165,7 @@ def update_posts(reddit, db_connection, batch_size):
     while posts:
         process_post_batch(posts, db_connection)
 
-        newest_post_utc = posts[0].created_utc
+        newest_post_utc = get_created_utc(posts[0])
         # set the newest post in the database to be the newest from the batch of
         # posts just saved
         state.set_most_recent_post_utc(newest_post_utc)
