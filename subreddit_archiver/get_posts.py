@@ -86,17 +86,21 @@ def get_post_batch(reddit, subreddit, batch_size, post_utc, after):
 
 def process_post_batch(posts, db_connection):
     # shallow copy to not mutate what's passed to this function
-    posts = posts[::]
+    # posts that may or may not exist on reddit (they could have been removed
+    # but remain on pusshift)
+    unchecked_posts = posts[::]
+    # array that will only contain posts that exist.
+    posts = []
 
     # get all the comments for each post
-    for post in posts:
+    for post in unchecked_posts:
         while True:
             try:
                 post.comments.replace_more(limit=None)
+                posts.append(post)
                 break
             # some posts that are on pushshift are removed on reddit and 404.
             except prawcore.exceptions.NotFound:
-                posts.remove(post)
                 break
             except praw.exceptions.APIException:
                 time.sleep(1)
