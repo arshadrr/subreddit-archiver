@@ -1,4 +1,5 @@
 import praw
+import os
 
 from subreddit_archiver import (
         cli,
@@ -20,6 +21,13 @@ def archive(subreddit, out_file, batch_size, credentials):
             client_secret = credentials.client_secret,
             user_agent = USER_AGENT
             )
+    if not os.path.exists(out_file) and not subreddit:
+        # the output file does not exist, indicating that this is the start of a
+        # new archival. The subreddit name cant be known from it and must be
+        # specified. Exit with an error. Checked here instead of in cli.py as
+        # the file name can't be known there.
+        cli.Parser.error(cli.SUBREDDIT_REQUIRED_ERROR)
+
     db_connection = db.get_connection(out_file)
     state = states.State(db_connection)
 
@@ -55,7 +63,7 @@ def update(out_file, batch_size, credentials):
     get_posts.update_posts(reddit, db_connection, batch_size)
 
 def main():
-    args = cli.get_arg_parser().parse_args()
+    args = cli.Parser.parse_args()
 
     if args.command == "archive":
         archive(args.subreddit, args.file, args.batch_size, args.credentials)

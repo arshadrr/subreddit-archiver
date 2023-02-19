@@ -63,15 +63,15 @@ optional arguments:
 
 required arguments:
   --subreddit SUBREDDIT
-                        Name of subreddit to save.
+                        Name of subreddit to save. Optional if resuming archival.
   --file FILE           Location and name of file that output SQLite database should take. e.g ~/archives/mysubreddit.sqlite
   --credentials CREDENTIALS
                         File containing credentials to access Reddit API.
 
 Saves posts and comments from a subreddit to a SQLite database. Archival can be
 stopped (e.g Ctr-C) while in progress safely and without data loss. To resume
-archival, call with the same arguments (point to the same output file and
-subreddit). The output file keeps track of the progress of archival.
+archival, just point to the same output file. The output file keeps track of the
+progress of archival.
 ```
 
 Suppose you'd like to archive the subreddit `/r/learnart` to the file
@@ -82,8 +82,8 @@ $ subreddit-archiver archive --subreddit learnart --file learnart.sqlite --crede
 Subreddit created on Tue Nov  9 05:18:57 2010
 Saved 3 posts more. Covered 0.0% of subreddit lifespan
 ```
-Archival can be stopped (e.g using `Ctr-C`). You can then resume by running the
-same command and specifying the same subreddit and output file.
+Archival can be stopped (e.g using `Ctr-C`). You can then resume by re-running
+while specifying the same output file.
 
 ### `subreddit-archiver update`
 ```
