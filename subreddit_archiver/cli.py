@@ -16,7 +16,7 @@ newer than the newest post in the archive. Changes to older posts and comments
 will not be added. Comments made after a post was saved to an archive will not
 be added."""
 
-VERSION = "0.0.7"
+VERSION = "0.0.8"
 
 SUBREDDIT_REQUIRED_ERROR= "the argument --subreddit is required when archiving for the first time"
 

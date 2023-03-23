@@ -15,15 +15,16 @@ def get_from_pushshift(url):
     return data
 
 def make_pushshift_url(subreddit, batch_size, post_utc, after):
-    # the pushshift.io API is documented at https://github.com/pushshift/api
+    # the pushshift.io API is documented at https://api.pushshift.io/redoc
     url = "https://api.pushshift.io/reddit/search/submission/?"
-    url += f"subreddit={subreddit}&size={batch_size}"
-    url += "&filter=id&order=desc"
+    url += f"subreddit={subreddit}&size={batch_size}&filter=id"
 
     if post_utc != None:
         if after:
+            url += "&order=asc"
             url += f"&since={int(post_utc)}"
         else:
+            url += "&order=desc"
             url += f"&until={int(post_utc)}"
 
     return url
@@ -169,7 +170,14 @@ def update_posts(reddit, db_connection, batch_size):
     while posts:
         process_post_batch(posts, db_connection)
 
-        newest_post_utc = get_created_utc(posts[0])
+        # the since paramater in the endpoint we're using is inclusive and
+        # so repeatedly returns the most recent post when we try to query posts
+        # newer than it. make up for this.
+        possible_newest_post_utc = get_created_utc(posts[-1])
+        if possible_newest_post_utc == newest_post_utc:
+            break
+        else:
+            newest_post_utc = possible_newest_post_utc
         # set the newest post in the database to be the newest from the batch of
         # posts just saved
         state.set_most_recent_post_utc(newest_post_utc)

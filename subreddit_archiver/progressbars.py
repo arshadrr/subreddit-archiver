@@ -42,7 +42,7 @@ class UpdateProgressbar:
     def __init__(self, most_recent_post_utc):
         self.posts_saved = 0
         print(f"Newest post in archive is from {time.ctime(most_recent_post_utc)}")
-        print("Preparing to update the archive", end="\r")
+        print("Preparing to update archive", end="\r")
 
     def tick(self, most_recent_post_utc, posts_saved):
         self.posts_saved += posts_saved
