@@ -1,4 +1,5 @@
 # subreddit-archiver
+⚠ This project is archived.
 
 This utility allows you to save subreddits as SQLite databases. Partial and
 complete archives can then be updates with newer posts submitted since the
@@ -8,8 +9,6 @@ analysis, etc.
 This tool makes uses of [pushshift.io](https://pushshift.io/), a volunteer-run
 service. If you found this tool useful, you can [donate to pushshift.io](https://pushshift.io/donations/) 
 as it makes this tool possible.
-
-⚠ (2/5/2023) Reddit has [revoked Pushshift's access](https://old.reddit.com/r/modnews/comments/134tjpe/reddit_data_api_update_changes_to_pushshift_access/) to it's API. The individual behind it [is working on resolving this](https://old.reddit.com/r/pushshift/comments/135cyzk/update_on_pushshift/). This tool will be unable to archive posts made since then.
 
 ## Installation
 
