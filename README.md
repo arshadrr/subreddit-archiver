@@ -1,5 +1,5 @@
 # subreddit-archiver
-⚠ This project is archived.
+⚠️ The Reddit API is no longer free. This project is archived. Check out Lemmy for an open-source, federated Reddit alternative. (See: [Wikipedia](https://en.wikipedia.org/wiki/Lemmy_(social_network)), [project website](https://join-lemmy.org/), [popular instance](https://lemmy.world/))
 
 This utility allows you to save subreddits as SQLite databases. Partial and
 complete archives can then be updates with newer posts submitted since the
